@@ -35,24 +35,28 @@ Explain which datasets you will use, how you will get training, validation and t
 [](https://www.kaggle.com/datasets/jayaantanaath/student-habits-vs-academic-performance)
 
 **size**: 73.66 kB, 1000 lijnen
+**algoritme**: logistic regression, nb, descision trees, ...
 
 https://www.kaggle.com/datasets/ethancratchley/email-phishing-dataset
 
 **size**: 11.81 MB, 525000 lijnen
+**algoritme**: logistic regression, nb, descision trees, ...
 
 https://www.kaggle.com/datasets/shaunthesheep/microsoft-catsvsdogs-dataset
 
 **size**: 12500 fotos katten 12500 fotos honden
+**algoritme**: logistic regression, nb, descision trees, ...
 
 Ik wil het simpel houden en niet teveel tijd steken in het ML gedeelte, daarom koost ik voor een relatief simpele dataset, nameijk de cats-dog dataset. 
 
 https://www.kaggle.com/datasets/bhupendram/carprices
 
 **size**: 866.23 MB, 88.05 MB, 550298 lijnen
+**algoritme**: lineair regression
 
 Omdat ik zeer geinteresseerd ben in auto's sprak deze dataset me aan. 
 
-nieuwe data kan bekomen worden door:
+nieuwe data kan bekomen worden door: 
 de data zal worden opgesplitst in training, validation en test data, verder kan er ook getest worden door manuele input volgens wat er op 2ehands te vinden is.
 
 
@@ -69,7 +73,7 @@ De bedoeling is om een simpel classificatiealgoritme te bouwen die katten van ho
 
 ---
 
-autoprices zal een verkoper een gerichte prijs kunnen geven en het biedt een potentiele koper inzicht in de prijs, of hij/zij niet teveel zal betalen.
+Aan de hand van een aantal belangrijke kerngegevens van de auto zal een verkoper of potentiele koper een gerichte en realistische prijs kunnen bepalen. Zo weet je als consument of je niet teveel zal betalen. 
 
 ## Flows & Actions
 Which flows & actions will you need to work out?
@@ -78,7 +82,7 @@ Work out which flows and actions you will need, for your project to complete suc
 
 
 Er moeten een aantal stappen worden doorlopen zoals:
-- data exploratie
+- data exploratie 
 - eventueel data cleaning
 - opzetten van een development omgeving met een devcontainer
 - ml algoritme implementeren
