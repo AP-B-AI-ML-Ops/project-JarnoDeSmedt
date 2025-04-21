@@ -4,6 +4,11 @@ https://apwt.gitbook.io/ba-tiai-ml-ops/projects/project-1
 ## problem that is being solved with this ML application
 `well described project and clear what project solves`
 
+~~Explain which datasets you will use, how you will get training, validation and test data, and how you will get new data to use your service.~~
+
+~~What does your service actually do?~~
+~~Explain what your project will do/predict. What kind of application are you making? What is the goal of this project?~~
+
 ## train model on the dataset and track the experiments (with mlflow)
 `both tracking and registry are used`
 
@@ -30,7 +35,6 @@ https://apwt.gitbook.io/ba-tiai-ml-ops/projects/project-1
 --------------------------------------------------------------
 
 ## Dataset(s)
-Explain which datasets you will use, how you will get training, validation and test data, and how you will get new data to use your service.
 
 [](https://www.kaggle.com/datasets/jayaantanaath/student-habits-vs-academic-performance)
 
@@ -44,36 +48,35 @@ https://www.kaggle.com/datasets/ethancratchley/email-phishing-dataset
 
 https://www.kaggle.com/datasets/shaunthesheep/microsoft-catsvsdogs-dataset
 
-**size**: 12500 fotos katten 12500 fotos honden
+**size**: 866.23 MB, 12500 fotos katten 12500 fotos honden
 **algoritme**: logistic regression, nb, descision trees, ...
 
 Ik wil het simpel houden en niet teveel tijd steken in het ML gedeelte, daarom koost ik voor een relatief simpele dataset, nameijk de cats-dog dataset. 
 
 https://www.kaggle.com/datasets/bhupendram/carprices
 
-**size**: 866.23 MB, 88.05 MB, 550298 lijnen
+**size**: 88.05 MB, 550298 lijnen
 **algoritme**: lineair regression
 
 Omdat ik zeer geinteresseerd ben in auto's sprak deze dataset me aan. 
 
-nieuwe data kan bekomen worden door: 
-de data zal worden opgesplitst in training, validation en test data, verder kan er ook getest worden door manuele input volgens wat er op 2ehands te vinden is.
+De dataset zal worden opgesplitst in een training- en testset, verder kan er ook getest worden door manuele input volgens wat er op 2ehands te vinden is.
 
+Nieuwe data om te hertrainen in de toekomst kan eventueel bekomen worden door scraping van 2ehands sites of manuele input
 
 
 
 ## Project Explanation
-What does your service actually do?
-
-Explain what your project will do/predict. What kind of application are you making? What is the goal of this project?
-
 --- 
 
 De bedoeling is om een simpel classificatiealgoritme te bouwen die katten van honden kan onderscheiden. Om op basis van beeld input bijvoorbeeld een deur te openen. In een uitbreiding van het project zou het ook mijn eigen kat moeten herkennen
 
 ---
 
-Aan de hand van een aantal belangrijke kerngegevens van de auto zal een verkoper of potentiele koper een gerichte en realistische prijs kunnen bepalen. Zo weet je als consument of je niet teveel zal betalen. 
+Aan de hand van een aantal belangrijke kerngegevens van de auto zal het machine learning algoritme een gerichte prijs adviseren op basis van de trainingsdata. De service wordt via een webapplicatie ter beschikking gesteld aan het publiek. 
+
+Deze prijs kan de verkoper gebruiken bij het bepalen van de vraagprijs of een potentiele koper gebruiken om te weten of het een realistische prijs is. Zo weet je als consument of je niet teveel zal betalen. 
+
 
 ## Flows & Actions
 Which flows & actions will you need to work out?
@@ -81,11 +84,16 @@ Which flows & actions will you need to work out?
 Work out which flows and actions you will need, for your project to complete successfully.
 
 
+
+
 Er moeten een aantal stappen worden doorlopen zoals:
-- data exploratie 
+~~- data exploratie~~ 
 - eventueel data cleaning
 - opzetten van een development omgeving met een devcontainer
 - ml algoritme implementeren
 - ml experiments tracken 
 - orchestreren met prefect
+- pre-commit hooks
+- readme docs how to run
+- flask webapp
 - visualiseren met grafana en tresholds + triggers/alerts implementeren
