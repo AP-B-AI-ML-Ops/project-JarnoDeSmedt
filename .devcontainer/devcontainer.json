@@ -1,0 +1,18 @@
+// Base image with Python only
+// Minimal extensions
+// Only install what’s strictly necessary
+// Just forward the ports you care about (e.g., Flask app)
+{
+    "name": "mlops-project-jarno",
+    "image": "python:3.10-slim",
+    "postCreateCommand": "pip install --no-cache-dir -r requirements.txt",
+    "extensions": [
+      "ms-python.python"
+    ],
+    "forwardPorts": [5000],
+    "settings": {
+      "python.formatting.provider": "black"
+    }
+  }
+
+

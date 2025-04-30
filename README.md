@@ -84,15 +84,14 @@ Which flows & actions will you need to work out?
 Work out which flows and actions you will need, for your project to complete successfully.
 
 
-
-
 Er moeten een aantal stappen worden doorlopen zoals:
 ~~- data exploratie~~ 
-- eventueel data cleaning
+~~- eventueel data cleaning~~
 - opzetten van een development omgeving met een devcontainer
-- ml algoritme implementeren
+~~- ml algoritme implementeren~~
 - ml experiments tracken 
 - orchestreren met prefect
+- unit tests
 - pre-commit hooks
 - readme docs how to run
 - flask webapp
