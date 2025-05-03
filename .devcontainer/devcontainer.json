@@ -1,18 +1,18 @@
-// Base image with Python only
-// Minimal extensions
-// Only install what’s strictly necessary
+// python slim base image (dus enkel python zonder extra tools met minimale extentions) -> daarom postcreate command om git nog in de container te installeren
 // Just forward the ports you care about (e.g., Flask app)
 {
-    "name": "mlops-project-jarno",
-    "image": "python:3.10-slim",
-    "postCreateCommand": "pip install --no-cache-dir -r requirements.txt",
-    "extensions": [
-      "ms-python.python"
-    ],
-    "forwardPorts": [5000],
-    "settings": {
-      "python.formatting.provider": "black"
-    }
+  "name": "mlops-project-jarno",
+  "image": "python:3.10-slim",
+  "postCreateCommand": "apt-get update && apt-get install -y git && pip install --no-cache-dir -r requirements.txt",
+  "extensions": [
+    "ms-python.python",
+    "ms-vscode.remote-repositories",
+    "github.remotehub"
+  ],
+  "forwardPorts": [5000], //TODO checken of ik ook nog de poort van prefect en mlops moet forwarden? 
+  "settings": {
+    "python.formatting.provider": "black"
   }
+}
 
 

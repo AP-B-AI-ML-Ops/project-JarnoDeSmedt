@@ -6,7 +6,8 @@ import numpy as np
 import mlflow
 
 # Set MLflow tracking URI (optional if running locally)
-mlflow.set_tracking_uri("http://mlflow:5000")
+#mlflow.set_tracking_uri("http://mlflow:5000")
+mlflow.set_tracking_uri("http://localhost:5001")
 
 # Load the model from the registry (use either stage or version)
 MODEL_NAME = "car-price-model"
@@ -22,13 +23,15 @@ with open("model.pkl", "rb") as f:
 """
 
 try:
-    model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/{MODEL_STAGE}")
+    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/{MODEL_STAGE}")
     
     # You can also load by version instead of stage:
-    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/1")
-
+    #print(f"Loading model from: models:/{MODEL_NAME}/versions/1")
+    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/versions/1")
+    
     # or with alias if you have set it in the MLflow UI
-    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/latest")
+    print(f"Loading model from: models:/{MODEL_NAME}/champion")
+    model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/champion")
 
 except Exception as e:
     model = None

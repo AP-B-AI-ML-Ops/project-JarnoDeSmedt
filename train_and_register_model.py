@@ -1,20 +1,27 @@
 
 import pandas as pd
 import numpy as np
+
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
+
 import mlflow
 import mlflow.sklearn
+
+from prefect import flow, task
+
 
 # Set up MLflow
 mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
 #mlflow.set_tracking_uri("sqlite:///mlflow.db") # when using docker (ZIE UITLEG DOCUMENTATIE)
 mlflow.set_experiment("CarPricePrediction")
 
+@task
 def load_data(path="./DATA/car_prices.csv"):
     return pd.read_csv(path)
 
+@task
 def preprocess_data(df):
     df = df.dropna(subset=['condition', 'sellingprice'])
     df['condition'] = df['condition'].astype(int)
@@ -40,20 +47,54 @@ def preprocess_data(df):
     df_encoded = pd.get_dummies(df, columns=['make'])
     return df_encoded
 
-def train_and_log_model(df_encoded):
+@task
+def split_data(df_encoded):
+    X = df_encoded.drop(columns=["sellingprice"])
+    y = df_encoded["sellingprice"]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
+
+@task
+def train_model(X_train, y_train):
     with mlflow.start_run():
-        X = df_encoded.drop(columns=["sellingprice"])
-        y = df_encoded["sellingprice"]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        # X = df_encoded.drop(columns=["sellingprice"])
+        # y = df_encoded["sellingprice"]
+        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         model = LinearRegression()
         model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
 
-        mse = mean_squared_error(y_test, y_pred)
-        rmse = np.sqrt(mse)
-        r2 = r2_score(y_test, y_pred)
+        # y_pred = model.predict(X_test)
+        # mse = mean_squared_error(y_test, y_pred)
+        # rmse = np.sqrt(mse)
+        # r2 = r2_score(y_test, y_pred)
 
+        # mlflow.log_param("model_type", "LinearRegression")
+        # mlflow.sklearn.log_model(model, artifact_path="model", registered_model_name="car-price-model")
+        # print("Model logged and registered with MLflow.")
+
+        return model
+
+@task
+def evaluate_model(model, X_test, y_test):
+    y_pred = model.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_test, y_pred)
+    
+    mlflow.log_metric("mse", mse)
+    mlflow.log_metric("rmse", rmse)
+    mlflow.log_metric("r2", r2)
+
+    print(f"Model Evaluation Metrics:\nMSE: {mse}\nRMSE: {rmse}\nR2: {r2}")
+    return mse, rmse, r2
+
+@task
+def log_to_mlflow(model, mse, rmse, r2):
+    mlflow.set_tracking_uri("http://localhost:5001")
+    mlflow.set_experiment("MyExperiment")
+
+    with mlflow.start_run():
         mlflow.log_param("model_type", "LinearRegression")
         mlflow.log_metric("mse", mse)
         mlflow.log_metric("rmse", rmse)
@@ -62,7 +103,15 @@ def train_and_log_model(df_encoded):
         mlflow.sklearn.log_model(model, artifact_path="model", registered_model_name="car-price-model")
         print("Model logged and registered with MLflow.")
 
-if __name__ == "__main__":
+@flow(name="training-pipeline")
+def training_pipeline():
     df = load_data()
-    df_preprocessed = preprocess_data(df)
-    train_and_log_model(df_preprocessed)
+    X_train, X_test, y_train, y_test = preprocess_data(df)
+    model = train_model(X_train, y_train)
+    mse, rmse, r2 = evaluate_model(model, X_test, y_test)
+    log_to_mlflow(model, mse, rmse, r2)
+    print("Training pipeline completed successfully.")
+
+if __name__ == "__main__":
+    # Run the training pipeline 
+    training_pipeline()

@@ -2,7 +2,7 @@
 https://apwt.gitbook.io/ba-tiai-ml-ops/projects/project-1
 
 ## problem that is being solved with this ML application
-`well described project and clear what project solves`
+~~`well described project and clear what project solves`~~
 
 ~~Explain which datasets you will use, how you will get training, validation and test data, and how you will get new data to use your service.~~
 
@@ -10,13 +10,15 @@ https://apwt.gitbook.io/ba-tiai-ml-ops/projects/project-1
 ~~Explain what your project will do/predict. What kind of application are you making? What is the goal of this project?~~
 
 ## train model on the dataset and track the experiments (with mlflow)
-`both tracking and registry are used`
+~~`both tracking and registry are used`~~
 
 ## create model training pipeline (orchestration with Prefect)
 ``workflow orchestration: fully worked out and deployed workflow`
+...TODO: enkel nog Prefect runnen, tasks en flows zijn wel al klaargemaakt
 
 ## deploy model as a web-service
 `The model deployment code is containerized and could be deployed to cloud`
+...TODO: basic webapp staat al klaar
 
 ## monitor performance of the model (evidently, grafana)
 `Comprehensive model monitoring that sends alerts or runs a conditional workflow (e.g. retraining, switching to a different model, ...) if the defined metrics threshold is violated`
@@ -46,12 +48,6 @@ https://www.kaggle.com/datasets/ethancratchley/email-phishing-dataset
 **size**: 11.81 MB, 525000 lijnen
 **algoritme**: logistic regression, nb, descision trees, ...
 
-https://www.kaggle.com/datasets/shaunthesheep/microsoft-catsvsdogs-dataset
-
-**size**: 866.23 MB, 12500 fotos katten 12500 fotos honden
-**algoritme**: logistic regression, nb, descision trees, ...
-
-Ik wil het simpel houden en niet teveel tijd steken in het ML gedeelte, daarom koost ik voor een relatief simpele dataset, nameijk de cats-dog dataset. 
 
 https://www.kaggle.com/datasets/bhupendram/carprices
 
@@ -65,17 +61,11 @@ De dataset zal worden opgesplitst in een training- en testset, verder kan er ook
 Nieuwe data om te hertrainen in de toekomst kan eventueel bekomen worden door scraping van 2ehands sites of manuele input
 
 
-
 ## Project Explanation
---- 
 
-De bedoeling is om een simpel classificatiealgoritme te bouwen die katten van honden kan onderscheiden. Om op basis van beeld input bijvoorbeeld een deur te openen. In een uitbreiding van het project zou het ook mijn eigen kat moeten herkennen
+Aan de hand van een aantal belangrijke kerngegevens van een auto zal het machine learning algoritme een gerichte prijs adviseren op basis van de trainingsdata. De service wordt via een webapplicatie ter beschikking gesteld aan het publiek. 
 
----
-
-Aan de hand van een aantal belangrijke kerngegevens van de auto zal het machine learning algoritme een gerichte prijs adviseren op basis van de trainingsdata. De service wordt via een webapplicatie ter beschikking gesteld aan het publiek. 
-
-Deze prijs kan de verkoper gebruiken bij het bepalen van de vraagprijs of een potentiele koper gebruiken om te weten of het een realistische prijs is. Zo weet je als consument of je niet teveel zal betalen. 
+Deze geschatte prijs kan de verkoper gebruiken bij het bepalen van de vraagprijs of een potentiele koper gebruiken om te weten of het een realistische prijs is. Zo weet je als consument of je niet teveel zal betalen. 
 
 
 ## Flows & Actions
@@ -87,10 +77,10 @@ Work out which flows and actions you will need, for your project to complete suc
 Er moeten een aantal stappen worden doorlopen zoals:
 ~~- data exploratie~~ 
 ~~- eventueel data cleaning~~
-- opzetten van een development omgeving met een devcontainer
+~~- opzetten van een development omgeving met een devcontainer~~
 ~~- ml algoritme implementeren~~
-- ml experiments tracken 
-- orchestreren met prefect
+~~- ml experiments tracken ~~
+- orchestreren met prefect 
 - unit tests
 - pre-commit hooks
 - readme docs how to run
