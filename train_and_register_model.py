@@ -8,8 +8,8 @@ import mlflow
 import mlflow.sklearn
 
 # Set up MLflow
-mlflow.set_tracking_uri("http://localhost:5001")
-#mlflow.set_tracking_uri("sqlite:///mlflow.db")
+mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
+#mlflow.set_tracking_uri("sqlite:///mlflow.db") # when using docker (ZIE UITLEG DOCUMENTATIE)
 mlflow.set_experiment("CarPricePrediction")
 
 def load_data(path="./DATA/car_prices.csv"):
