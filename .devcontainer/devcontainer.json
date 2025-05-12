@@ -2,14 +2,18 @@
 // Just forward the ports you care about (e.g., Flask app)
 {
   "name": "mlops-project-jarno",
-  "image": "python:3.10-slim",
+    "dockerComposeFile": ["../docker-compose.yaml"], //Werkt nu met docker compose
+    "service": "train-dev", // locate the service used in the docker compose file
+    "shutdownAction": "none",
+    "workspaceFolder": "/workspace", //standaard locatie van de workspace in de container 
+  //"image": "python:3.10-slim", //oude manier van werken
   "postCreateCommand": "apt-get update && apt-get install -y git && pip install --no-cache-dir -r requirements.txt",
   "extensions": [
     "ms-python.python",
     "ms-vscode.remote-repositories",
     "github.remotehub"
   ],
-  "forwardPorts": [5000], //TODO checken of ik ook nog de poort van prefect en mlops moet forwarden? 
+  "forwardPorts": [5000, 5001, 4200],
   "settings": {
     "python.formatting.provider": "black"
   }
