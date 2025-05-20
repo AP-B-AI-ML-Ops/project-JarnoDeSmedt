@@ -3,6 +3,7 @@ services:
       image: mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
       volumes:
         - .:/workspace:cached
+        - ./mlruns:/mlflow/mlruns # This way, any artifact logging (like .pkl files) will persist and be accessible through the MLflow UI.
         #- batch-data:/batch-data
       command: sleep infinity
   webapp:
@@ -25,6 +26,7 @@ services:
     volumes:
       - ./mlruns:/mlflow/mlruns
     environment:
+      #- MLFLOW_TRACKING_URI=http://mlflow:5000
       - BACKEND_STORE_URI=sqlite:///mlflow.db
       - ARTIFACT_ROOT=/mlflow/mlruns
     command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlflow/mlruns --host 0.0.0.0

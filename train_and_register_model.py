@@ -8,14 +8,16 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 import mlflow
 import mlflow.sklearn
+import mlflow.models
+import mlflow.models.signature
 
 from prefect import flow, task
 
 
 # Set up MLflow
-mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
+#mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
 #mlflow.set_tracking_uri("sqlite:///mlflow.db") # when using docker (ZIE UITLEG DOCUMENTATIE)
-mlflow.set_experiment("CarPricePrediction")
+mlflow.set_tracking_uri("http://mlflow:5000") # This tells your train-dev container to send logs to the actual mlflow container (port 5000 internally in Docker network).
 
 @task
 def load_data(path="./DATA/car_prices.csv"):
@@ -56,24 +58,10 @@ def split_data(df_encoded):
 
 @task
 def train_model(X_train, y_train):
-    with mlflow.start_run():
-        # X = df_encoded.drop(columns=["sellingprice"])
-        # y = df_encoded["sellingprice"]
-        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    model = LinearRegression()
+    model.fit(X_train, y_train)
 
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-
-        # y_pred = model.predict(X_test)
-        # mse = mean_squared_error(y_test, y_pred)
-        # rmse = np.sqrt(mse)
-        # r2 = r2_score(y_test, y_pred)
-
-        # mlflow.log_param("model_type", "LinearRegression")
-        # mlflow.sklearn.log_model(model, artifact_path="model", registered_model_name="car-price-model")
-        # print("Model logged and registered with MLflow.")
-
-        return model
+    return model
 
 @task
 def evaluate_model(model, X_test, y_test):
@@ -82,35 +70,39 @@ def evaluate_model(model, X_test, y_test):
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
     
+    #mlflow.log_metric("mse", mse)
+    #mlflow.log_metric("rmse", rmse)
+    #mlflow.log_metric("r2", r2)
+
+    # Define the input signature
+    input_example = X_test.iloc[:1]
+    signature = mlflow.models.signature.infer_signature(X_test, model.predict(X_test))
+
+    print(f"Model Evaluation Metrics:\nMSE: {mse}\nRMSE: {rmse}\nR2: {r2}")
+    return mse, rmse, r2, signature, input_example
+
+@task
+def log_to_mlflow(model, mse, rmse, r2, signature, input_example):
+    mlflow.set_experiment("CarPricePrediction")
+
+    mlflow.log_param("model_type", "LinearRegression")
     mlflow.log_metric("mse", mse)
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("r2", r2)
 
-    print(f"Model Evaluation Metrics:\nMSE: {mse}\nRMSE: {rmse}\nR2: {r2}")
-    return mse, rmse, r2
-
-@task
-def log_to_mlflow(model, mse, rmse, r2):
-    mlflow.set_tracking_uri("http://localhost:5001")
-    mlflow.set_experiment("MyExperiment")
-
-    with mlflow.start_run():
-        mlflow.log_param("model_type", "LinearRegression")
-        mlflow.log_metric("mse", mse)
-        mlflow.log_metric("rmse", rmse)
-        mlflow.log_metric("r2", r2)
-
-        mlflow.sklearn.log_model(model, artifact_path="model", registered_model_name="car-price-model")
-        print("Model logged and registered with MLflow.")
+    mlflow.sklearn.log_model(model, artifact_path="model", registered_model_name="car-price-model", signature=signature, input_example=input_example)
+    print("Model logged and registered with MLflow.")
 
 @flow(name="training-pipeline")
 def training_pipeline():
-    df = load_data()
-    X_train, X_test, y_train, y_test = preprocess_data(df)
-    model = train_model(X_train, y_train)
-    mse, rmse, r2 = evaluate_model(model, X_test, y_test)
-    log_to_mlflow(model, mse, rmse, r2)
-    print("Training pipeline completed successfully.")
+    with mlflow.start_run():
+        df = load_data()
+        df_encoded = preprocess_data(df)  # This returns the preprocessed dataframe
+        X_train, X_test, y_train, y_test = split_data(df_encoded)  # Now split it
+        model = train_model(X_train, y_train)
+        mse, rmse, r2, signature, input_example  = evaluate_model(model, X_test, y_test)
+        log_to_mlflow(model, mse, rmse, r2, signature, input_example)
+        print("Training pipeline completed successfully.")
 
 if __name__ == "__main__":
     # Run the training pipeline 
