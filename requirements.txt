@@ -1,6 +1,7 @@
 mlflow
 pandas
 scikit-learn
+gunicorn
 numpy
 matplotlib
 seaborn

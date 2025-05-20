@@ -8,6 +8,7 @@ services:
   webapp:
     build:
       context: ./webapp
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     volumes:
@@ -27,18 +28,6 @@ services:
       - BACKEND_STORE_URI=sqlite:///mlflow.db
       - ARTIFACT_ROOT=/mlflow/mlruns
     command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlflow/mlruns --host 0.0.0.0
-
-  # mlflow:
-  # image: ghcr.io/mlflow/mlflow:v2.11.1
-  # ports:
-  #   - "5001:5000"
-  # volumes:
-  #   - ./mlruns:/mlflow/mlruns
-  # environment:
-  #   - BACKEND_STORE_URI=sqlite:///mlflow.db
-  #   - ARTIFACT_ROOT=/mlflow/mlruns
-  # command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlflow/mlruns --host 0.0.0.0
-
 
   prefect:
     image: prefecthq/prefect:2.14.12-python3.10
