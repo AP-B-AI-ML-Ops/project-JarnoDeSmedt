@@ -1,13 +1,13 @@
 # this is the simple webapp to serve the model with a basic predict endpoint
+import os
 from flask import Flask, request, jsonify
 import pickle
 import numpy as np
 
 import mlflow
 
-# Set MLflow tracking URI (optional if running locally)
-#mlflow.set_tracking_uri("http://mlflow:5000")
-mlflow.set_tracking_uri("http://localhost:5001")
+# Set MLflow tracking URI point to the MLflow server
+mlflow.set_tracking_uri("http://mlflow:5000")
 
 # Load the model from the registry (use either stage or version)
 MODEL_NAME = "car-price-model"
@@ -21,21 +21,28 @@ app = Flask(__name__)
 with open("model.pkl", "rb") as f:
     model = pickle.load(f) 
 """
+model = None  # global
 
 try:
+    #when using a stage, use models:/<model_name>/<stage> Just make sure MODEL_STAGE is exactly one of:
+    # "None" (literally this string, if you don't want to use a stage)
+    # "Production"
+    # "Staging"
+    # "Archived"
     #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/{MODEL_STAGE}")
     
-    # You can also load by version instead of stage:
-    #print(f"Loading model from: models:/{MODEL_NAME}/versions/1")
-    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/versions/1")
-    
+    #When using a version number, use model_uri parameter models:/<model_name>/<version_number>
+    print(f"Loading model from: models:/{MODEL_NAME}/versions/2")
+    model = mlflow.pyfunc.load_model(model_uri="models:/car-price-model/2")
+    print("✅ Model loaded successfully!")
+
     # or with alias if you have set it in the MLflow UI
-    print(f"Loading model from: models:/{MODEL_NAME}/champion")
-    model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/champion")
+    #print(f"Loading model from: models:/{MODEL_NAME}/champion")
+    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/champion")
 
 except Exception as e:
     model = None
-    print(f"Error loading model: {e}")
+    print(f"❌ Error loading model: {e}")
 
 @app.route("/")
 def home():
@@ -43,6 +50,8 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    print("DEBUG: predict endpoint called")
+    print(f"DEBUG: model is type {type(model)}")
     if model is None:
         return jsonify({"error": "Model not available"}), 500
     

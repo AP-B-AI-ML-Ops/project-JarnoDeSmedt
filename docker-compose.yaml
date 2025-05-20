@@ -3,9 +3,9 @@ services:
       image: mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
       volumes:
         - .:/workspace:cached
-        - ./mlruns:/mlflow/mlruns # This way, any artifact logging (like .pkl files) will persist and be accessible through the MLflow UI.
+        - mlruns:/mlflow/mlruns # don't use ./mlruns... -> is lokaal filesysteem! maar mlruns:/... This way, any artifact logging (like .pkl files) will persist and be accessible through the MLflow UI.
         #- batch-data:/batch-data
-      command: sleep infinity
+      command: sleep infinity #bash -c "cd /workspace && pip install -r requirements.txt && python train_and_register_model.py"
   webapp:
     build:
       context: ./webapp
@@ -14,6 +14,7 @@ services:
       - "5000:5000"
     volumes:
       - ./webapp:/app
+      - mlruns:/mlflow/mlruns
     depends_on:
       - mlflow
     environment:
@@ -24,9 +25,9 @@ services:
     ports:
       - "5001:5000"
     volumes:
-      - ./mlruns:/mlflow/mlruns
+      - mlruns:/mlflow/mlruns
     environment:
-      #- MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
       - BACKEND_STORE_URI=sqlite:///mlflow.db
       - ARTIFACT_ROOT=/mlflow/mlruns
     command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlflow/mlruns --host 0.0.0.0
@@ -61,5 +62,6 @@ services:
   #   depends_on:
   #     - prometheus
 
-# volumes:
+volumes:
+  mlruns:
 #   grafana-data:

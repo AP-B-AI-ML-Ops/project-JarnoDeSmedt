@@ -18,6 +18,7 @@ from prefect import flow, task
 #mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
 #mlflow.set_tracking_uri("sqlite:///mlflow.db") # when using docker (ZIE UITLEG DOCUMENTATIE)
 mlflow.set_tracking_uri("http://mlflow:5000") # This tells your train-dev container to send logs to the actual mlflow container (port 5000 internally in Docker network).
+mlflow.set_experiment("CarPricePrediction")
 
 @task
 def load_data(path="./DATA/car_prices.csv"):
@@ -83,7 +84,7 @@ def evaluate_model(model, X_test, y_test):
 
 @task
 def log_to_mlflow(model, mse, rmse, r2, signature, input_example):
-    mlflow.set_experiment("CarPricePrediction")
+    
 
     mlflow.log_param("model_type", "LinearRegression")
     mlflow.log_metric("mse", mse)
