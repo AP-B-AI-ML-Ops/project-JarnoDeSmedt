@@ -290,3 +290,10 @@ optioneel: Run hooks manueel voor staging om te kijken wat er veranderd voor de 
 `pre-commit run --all-files`
 
 FIX warning ivm setlocale: mag genegeerd worden, maar `export LC_ALL=C.UTF-8` in terminal om het te stoppen
+
+![uitvoeren git commit -m "..."](image-3.png)
+
+je merkt dat pre-commit hooks dingen hebben aangepast en je nu dus opnieuw de wijzigingen moet stagen en committen.
+
+bijvoorbeeld hier zie je in de working tree dat isort een aantal dingen heeft gewijzigd in de imports
+![isort working tree results](image-4.png)

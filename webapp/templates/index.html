@@ -1,0 +1,107 @@
+<!-- TODO: add tooltips for each field -->
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Car Price Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
+        <h1 class="text-2xl font-bold text-center text-blue-600">Car Price Prediction</h1>
+
+        <form id="predict-form" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="year" class="block text-sm font-medium">Year</label>
+                    <input type="number" id="year" class="mt-1 block w-full border rounded-md p-2" required>
+                </div>
+                <div>
+                    <label for="condition" class="block text-sm font-medium">Condition</label>
+                    <input type="number" id="condition" min="0" max="5" class="mt-1 block w-full border rounded-md p-2" required>
+                </div>
+                <div>
+                    <label for="odometer" class="block text-sm font-medium">Odometer</label>
+                    <input type="number" id="odometer" class="mt-1 block w-full border rounded-md p-2" required>
+                </div>
+                <div>
+                    <label for="mmr" class="block text-sm font-medium">MMR</label>
+                    <input type="number" id="mmr" class="mt-1 block w-full border rounded-md p-2" required>
+                </div>
+                <div class="col-span-2">
+                    <label for="make" class="block text-sm font-medium">Make</label>
+                    <select id="make" class="mt-1 block w-full border rounded-md p-2" required>
+                        <option value="">-- Select Make --</option>
+                        <option value="acura">Acura</option>
+                        <option value="volvo">Volvo</option>
+                        <option value="bmw">BMW</option>
+                        <option value="audi">Audi</option>
+                        <option value="toyota">Toyota</option>
+                        <!-- Add other makes as needed -->
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                Predict Price
+            </button>
+        </form>
+
+        <div id="result" class="text-center text-xl font-semibold text-green-600"></div>
+    </div>
+
+    <script>
+        const makes = [
+            "acura","airstream","aston martin","audi","bentley","bmw","buick","cadillac","chevrolet",
+            "chrysler","daewoo","dodge","dot","ferrari","fiat","fisker","ford","geo","gmc","honda","hummer",
+            "hyundai","infiniti","isuzu","jaguar","jeep","kia","lamborghini","landrover","lexus","lincoln",
+            "lotus","maserati","mazda","mercedes","mercury","mini","mitsubishi","nissan","oldsmobile",
+            "plymouth","pontiac","porsche","ram","rolls-royce","saab","saturn","scion","smart","subaru",
+            "suzuki","tesla","toyota","volkswagen","volvo"
+        ];
+
+        document.getElementById('predict-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const year = parseInt(document.getElementById('year').value);
+            const condition = parseFloat(document.getElementById('condition').value);
+            const odometer = parseFloat(document.getElementById('odometer').value);
+            const mmr = parseFloat(document.getElementById('mmr').value);
+            const selectedMake = document.getElementById('make').value;
+
+            // Build make dictionary
+            const makeDict = {};
+            makes.forEach(make => {
+                makeDict[`make_${make}`] = (make === selectedMake);
+            });
+
+            const features = {
+                year,
+                condition,
+                odometer,
+                mmr,
+                ...makeDict
+            };
+
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ features: [features] })
+            });
+
+            const resultDiv = document.getElementById("result");
+
+            if (response.ok) {
+                const json = await response.json();
+                resultDiv.textContent = `Predicted Price: $${json.prediction[0].toFixed(2)}`;
+            } else {
+                const error = await response.json();
+                resultDiv.textContent = `Error: ${error.error}`;
+                resultDiv.classList.remove("text-green-600");
+                resultDiv.classList.add("text-red-600");
+            }
+        });
+    </script>
+</body>
+</html>
