@@ -280,3 +280,13 @@ repos:
 ````
 3) installeer de hook
 `pre-commit install`
+
+nu worden de pre-commit hooks telkens uitgevoerd bij het committen
+
+LET OP: telkens je een aanpassing doet in de pre-commit.yaml file moet je opnieuw installeren met `pre-commit install`
+
+optioneel: Run hooks manueel voor staging om te kijken wat er veranderd voor de commit:
+
+`pre-commit run --all-files`
+
+FIX warning ivm setlocale: mag genegeerd worden, maar `export LC_ALL=C.UTF-8` in terminal om het te stoppen
