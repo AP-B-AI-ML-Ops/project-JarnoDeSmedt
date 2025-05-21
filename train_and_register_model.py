@@ -14,7 +14,6 @@ from prefect import flow, task
 
 # Set up MLflow
 #mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
-#mlflow.set_tracking_uri("sqlite:///mlflow.db") # when using docker (ZIE UITLEG DOCUMENTATIE)
 mlflow.set_tracking_uri("http://mlflow:5000") # This tells your train-dev container to send logs to the actual mlflow container (port 5000 internally in Docker network).
 mlflow.set_experiment("CarPricePrediction")
 
@@ -68,14 +67,10 @@ def evaluate_model(model, X_test, y_test):
     mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
-    
-    #mlflow.log_metric("mse", mse)
-    #mlflow.log_metric("rmse", rmse)
-    #mlflow.log_metric("r2", r2)
 
     # Define the input signature
     print(X_test.columns.tolist())
-    #input_example = X_test[["year", "condition", "odometer", "mmr"]]
+    #input_example = X_test[["year", "condition", "odometer", "mmr", "make"]] # zou op deze manier moeten zodat je niet alle boolean encoded make_* kolommen hebt
     input_example = X_test.iloc[:1]
     signature = mlflow.models.signature.infer_signature(X_test, model.predict(X_test))
 
@@ -96,8 +91,8 @@ def log_to_mlflow(model, mse, rmse, r2, signature, input_example):
 def training_pipeline():
     with mlflow.start_run():
         df = load_data()
-        df_encoded = preprocess_data(df)  # This returns the preprocessed dataframe
-        X_train, X_test, y_train, y_test = split_data(df_encoded)  # Now split it
+        df_encoded = preprocess_data(df) 
+        X_train, X_test, y_train, y_test = split_data(df_encoded)
         model = train_model(X_train, y_train)
         mse, rmse, r2, signature, input_example  = evaluate_model(model, X_test, y_test)
         log_to_mlflow(model, mse, rmse, r2, signature, input_example)

@@ -149,16 +149,24 @@ prefect agent start --pool default-agent-pool
 # flask app
 
 ````python
-    model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/{MODEL_STAGE}")
+    #when using a stage, use models:/<model_name>/<stage> Just make sure MODEL_STAGE is exactly one of:
+    # "None" (literally this string, if you don't want to use a stage)
+    # "Production"
+    # "Staging"
+    # "Archived"
+    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/{MODEL_STAGE}")
     
-    # You can also load by version instead of stage:
-    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/1")
+    #When using a version number, use model_uri parameter models:/<model_name>/<version_number>
+    print(f"Loading model from: models:/{MODEL_NAME}/versions/1")
+    model = mlflow.pyfunc.load_model(model_uri="models:/car-price-model/1")
+    print("✅ Model loaded successfully!")
 
     # or with alias if you have set it in the MLflow UI
-    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/latest")
+    #print(f"Loading model from: models:/{MODEL_NAME}/champion")
+    #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/champion")
 ````
 
-To run the app, use the command: python app.py
+To run the app locally, use the command: python app.py (maar is niet nodig via docker compose want runt al vanzelf)
 
 Send a request like this to /predict (http://localhost:5000/predict):
 ````json
@@ -166,6 +174,78 @@ Send a request like this to /predict (http://localhost:5000/predict):
   "features": [2016, 120000, 1.6, 5]
 }
 ````
+=> werkt nog niet helemaal want de make column wordt geencodeerd in de model training, en geeft errors in het infer schema.
+
+Hierdoor dus een volledige json nodig met alle makes, zoals hieronder:
+````json
+{
+  "features": [
+    {
+      "year": 2016,
+      "condition": 1,
+      "odometer": 120000,
+      "mmr": 5000,
+      "make_acura": false,
+      "make_airstream": false,
+      "make_aston martin": false,
+      "make_audi": false,
+      "make_bentley": false,
+      "make_bmw": false,
+      "make_buick": false,
+      "make_cadillac": false,
+      "make_chevrolet": false,
+      "make_chrysler": false,
+      "make_daewoo": false,
+      "make_dodge": false,
+      "make_dot": false,
+      "make_ferrari": false,
+      "make_fiat": false,
+      "make_fisker": false,
+      "make_ford": false,
+      "make_geo": false,
+      "make_gmc": false,
+      "make_honda": false,
+      "make_hummer": false,
+      "make_hyundai": false,
+      "make_infiniti": false,
+      "make_isuzu": false,
+      "make_jaguar": false,
+      "make_jeep": false,
+      "make_kia": false,
+      "make_lamborghini": false,
+      "make_landrover": false,
+      "make_lexus": false,
+      "make_lincoln": false,
+      "make_lotus": false,
+      "make_maserati": false,
+      "make_mazda": false,
+      "make_mercedes": false,
+      "make_mercury": false,
+      "make_mini": false,
+      "make_mitsubishi": false,
+      "make_nissan": false,
+      "make_oldsmobile": false,
+      "make_plymouth": false,
+      "make_pontiac": false,
+      "make_porsche": false,
+      "make_ram": false,
+      "make_rolls-royce": false,
+      "make_saab": false,
+      "make_saturn": false,
+      "make_scion": false,
+      "make_smart": false,
+      "make_subaru": false,
+      "make_suzuki": false,
+      "make_tesla": false,
+      "make_toyota": false,
+      "make_volkswagen": false,
+      "make_volvo": true
+    }
+  ]
+}
+````
+
+![prediction post request](image.png)
 
 # 
 

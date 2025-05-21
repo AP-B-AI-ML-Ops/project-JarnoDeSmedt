@@ -4,8 +4,7 @@ services:
       volumes:
         - .:/workspace:cached
         - mlruns:/mlflow/mlruns # don't use ./mlruns... -> is lokaal filesysteem! maar mlruns:/... This way, any artifact logging (like .pkl files) will persist and be accessible through the MLflow UI.
-        #- batch-data:/batch-data
-      command: sleep infinity #bash -c "cd /workspace && pip install -r requirements.txt && python train_and_register_model.py"
+      command: sleep infinity
   webapp:
     build:
       context: ./webapp
@@ -64,4 +63,4 @@ services:
 
 volumes:
   mlruns:
-#   grafana-data:
+# grafana-data:
