@@ -7,7 +7,7 @@
     "shutdownAction": "none",
     "workspaceFolder": "/workspace", //standaard locatie van de workspace in de container 
   //"image": "python:3.10-slim", //oude manier van werken
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y git && pip install --no-cache-dir -r requirements.txt", //sudo anders permission denied
+  "postCreateCommand": "apt-get update && apt-get install -y git && pip install --no-cache-dir -r requirements.txt", //sudo anders permission denied
   "extensions": [
     "ms-python.python",
     "ms-vscode.remote-repositories",

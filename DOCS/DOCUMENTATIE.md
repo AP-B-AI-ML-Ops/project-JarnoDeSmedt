@@ -247,7 +247,9 @@ Hierdoor dus een volledige json nodig met alle makes, zoals hieronder:
 
 ![prediction post request](image.png)
 
-# 
+# testing
+
+voer `pytest` uit in de terminal van de root directory van het project (workspace)
 
 
 # 
