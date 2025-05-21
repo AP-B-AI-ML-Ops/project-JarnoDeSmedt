@@ -32,8 +32,8 @@ try:
     #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/{MODEL_STAGE}")
     
     #When using a version number, use model_uri parameter models:/<model_name>/<version_number>
-    print(f"Loading model from: models:/{MODEL_NAME}/versions/2")
-    model = mlflow.pyfunc.load_model(model_uri="models:/car-price-model/2")
+    print(f"Loading model from: models:/{MODEL_NAME}/versions/1")
+    model = mlflow.pyfunc.load_model(model_uri="models:/car-price-model/1")
     print("✅ Model loaded successfully!")
 
     # or with alias if you have set it in the MLflow UI

@@ -1,4 +1,3 @@
-
 import pandas as pd
 import numpy as np
 
@@ -13,12 +12,22 @@ import mlflow.models.signature
 
 from prefect import flow, task
 
-
 # Set up MLflow
 #mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
 #mlflow.set_tracking_uri("sqlite:///mlflow.db") # when using docker (ZIE UITLEG DOCUMENTATIE)
 mlflow.set_tracking_uri("http://mlflow:5000") # This tells your train-dev container to send logs to the actual mlflow container (port 5000 internally in Docker network).
 mlflow.set_experiment("CarPricePrediction")
+
+ALL_MAKES = [
+    'acura', 'airstream', 'aston martin', 'audi', 'bentley', 'bmw', 'buick',
+    'cadillac', 'chevrolet', 'chrysler', 'daewoo', 'dodge', 'dot', 'ferrari',
+    'fiat', 'fisker', 'ford', 'geo', 'gmc', 'honda', 'hummer', 'hyundai',
+    'infiniti', 'isuzu', 'jaguar', 'jeep', 'kia', 'lamborghini', 'landrover',
+    'lexus', 'lincoln', 'lotus', 'maserati', 'mazda', 'mercedes', 'mercury',
+    'mini', 'mitsubishi', 'nissan', 'oldsmobile', 'plymouth', 'pontiac',
+    'porsche', 'ram', 'rolls-royce', 'saab', 'saturn', 'scion', 'smart',
+    'subaru', 'suzuki', 'tesla', 'toyota', 'volkswagen', 'volvo'
+]
 
 @task
 def load_data(path="./DATA/car_prices.csv"):
@@ -76,6 +85,8 @@ def evaluate_model(model, X_test, y_test):
     #mlflow.log_metric("r2", r2)
 
     # Define the input signature
+    print(X_test.columns.tolist())
+    #input_example = X_test[["year", "condition", "odometer", "mmr"]]
     input_example = X_test.iloc[:1]
     signature = mlflow.models.signature.infer_signature(X_test, model.predict(X_test))
 
@@ -84,8 +95,6 @@ def evaluate_model(model, X_test, y_test):
 
 @task
 def log_to_mlflow(model, mse, rmse, r2, signature, input_example):
-    
-
     mlflow.log_param("model_type", "LinearRegression")
     mlflow.log_metric("mse", mse)
     mlflow.log_metric("rmse", rmse)
@@ -104,6 +113,37 @@ def training_pipeline():
         mse, rmse, r2, signature, input_example  = evaluate_model(model, X_test, y_test)
         log_to_mlflow(model, mse, rmse, r2, signature, input_example)
         print("Training pipeline completed successfully.")
+
+def prepare_input(raw_input: dict, all_makes: list) -> dict:
+    """
+    Converts a raw car input dict to the full one-hot encoded feature dict
+    required by the MLflow model.
+
+    :param raw_input: dict with base features like 'year', 'condition', 'odometer', 'mmr', 'make'
+    :param all_makes: list of all possible makes, e.g., ['audi', 'bmw', ..., 'volvo']
+    :return: dict with full features including make_* booleans
+    """
+    # Extract base info
+    year = raw_input.get("year")
+    condition = raw_input.get("condition")
+    odometer = raw_input.get("odometer")
+    mmr = raw_input.get("mmr")
+    make = raw_input.get("make", "").strip().lower()
+
+    # One-hot encode the make
+    make_features = {f"make_{m}": (m == make) for m in all_makes}
+
+    # Merge and return the full feature set
+    features = {
+        "year": year,
+        "condition": condition,
+        "odometer": odometer,
+        "mmr": mmr,
+        **make_features
+    }
+    return features
+
+
 
 if __name__ == "__main__":
     # Run the training pipeline 
