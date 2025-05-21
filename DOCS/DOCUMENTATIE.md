@@ -297,3 +297,7 @@ je merkt dat pre-commit hooks dingen hebben aangepast en je nu dus opnieuw de wi
 
 bijvoorbeeld hier zie je in de working tree dat isort een aantal dingen heeft gewijzigd in de imports
 ![isort working tree results](image-4.png)
+
+als je dan opnieuw add en commit zie je:
+
+![passed pre-commit hooks](image-5.png)
