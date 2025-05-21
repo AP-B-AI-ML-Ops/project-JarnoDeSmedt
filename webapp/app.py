@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, jsonify
 import pickle
 import numpy as np
+import pandas as pd
 
 import mlflow
 
@@ -61,10 +62,14 @@ def predict():
     if not data or "features" not in data:
         return jsonify({"error": "Missing 'features' in request"}), 400
 
-    features = np.array(data["features"]).reshape(1, -1)
-
     try:
-        prediction = model.predict(features)
+        # Expecting data["features"] to be a list of dicts
+        features_df = pd.DataFrame(data["features"])
+        
+        print(f"DEBUG: features_df columns: {features_df.columns.tolist()}")
+        print(f"DEBUG: features_df shape: {features_df.shape}")
+        
+        prediction = model.predict(features_df)
         return jsonify({"prediction": prediction.tolist()})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
