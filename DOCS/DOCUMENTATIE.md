@@ -250,6 +250,11 @@ Hierdoor dus een volledige json nodig met alle makes, zoals hieronder:
 # testing
 
 voer `pytest` uit in de terminal van de root directory van het project (workspace)
+`pytest -p no:warnings`
 
+MLflow schema warning:
+It’s warning about possible issues if your model receives missing values in integer columns. Not critical, but good to be aware of — you can leave this for now unless you’re deploying this to production.
+
+![unit test results](image-1.png)
 
 # 

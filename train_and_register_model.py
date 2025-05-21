@@ -24,7 +24,7 @@ def load_data(path="./DATA/car_prices.csv"):
 @task
 def preprocess_data(df):
     df = df.dropna(subset=['condition', 'sellingprice'])
-    df['condition'] = df['condition'].astype(int)
+    df.loc[:, 'condition'] = df['condition'].astype(int)
     df = df[["year", "make", "condition", "odometer", "mmr", "sellingprice"]]
     df = df.dropna().drop_duplicates()
 
@@ -41,7 +41,7 @@ def preprocess_data(df):
 
     def scale_condition(c):
         return min((c - 1) // 5 + 1, 10)
-    df['condition'] = df['condition'].apply(scale_condition)
+    df.loc[:, 'condition'] = df['condition'].apply(scale_condition)
 
     df['make'] = df['make'].astype("category")
     df_encoded = pd.get_dummies(df, columns=['make'])
