@@ -27,6 +27,13 @@ more info: https://xebia.com/blog/how-to-create-a-devcontainer-for-your-python-p
 
 via postcreate command in devcontainer.json wordt git geinstalleerd in de container zelf, je kan niet verwijzen naar de installatie op de windows machine omdat er vanuit de container zelf connectie wordt gemaakt. de standaard python:slim image bevat geen standaard git installatie
 
+in de docker workspace terminal:
+````
+git config --global user.email "jarno.desmedt@live.be"
+git config --global user.name "Jarno De Smedt"
+````
+om te kunnen committen vanuit de terminal of vscode extention
+
 # tracking URI
 
 
