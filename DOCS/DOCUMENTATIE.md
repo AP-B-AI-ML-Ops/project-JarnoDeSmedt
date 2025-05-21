@@ -2,13 +2,13 @@
 
 `.devcontainer` folder toevoegen met daarin `devcontainer.json` file erin:
 ````
-// python slim base image 
+// python slim base image
 {
   "name": "mlops-project-jarno",
   "image": "python:3.10-slim",
-  
-  // post create command voor het installeren van GIT in de devcontainer want hierin zit geen git, enkel op mijn lokale machine. Het kan zijn dat git bij in de image zit maar omdat het gaat om de slim variant is het de meest basic versie zonder extra dingen. 
-  
+
+  // post create command voor het installeren van GIT in de devcontainer want hierin zit geen git, enkel op mijn lokale machine. Het kan zijn dat git bij in de image zit maar omdat het gaat om de slim variant is het de meest basic versie zonder extra dingen.
+
   "postCreateCommand": "apt-get update && apt-get install -y git && pip install --no-cache-dir -r requirements.txt",
   "extensions": [
     "ms-python.python",
@@ -23,7 +23,7 @@
 ````
 more info: https://xebia.com/blog/how-to-create-a-devcontainer-for-your-python-project/
 
-# git 
+# git
 
 via postcreate command in devcontainer.json wordt git geinstalleerd in de container zelf, je kan niet verwijzen naar de installatie op de windows machine omdat er vanuit de container zelf connectie wordt gemaakt. de standaard python:slim image bevat geen standaard git installatie
 
@@ -50,7 +50,7 @@ Great question — understanding **when to use `sqlite:///mlflow.db` vs. `http:/
 ### 🔹 `sqlite:///mlflow.db`
 This refers to a **local SQLite database file** and is used as a **backend store** for MLflow — *by the MLflow server*, not your training script.
 
-> **This URI is set in your `mlflow` Docker service.**  
+> **This URI is set in your `mlflow` Docker service.**
 > It's not for clients like `train_streamlined.py`, but for configuring how MLflow stores run metadata.
 
 Example in `docker-compose.yml`:
@@ -62,13 +62,13 @@ mlflow:
            --host 0.0.0.0
 ```
 
-🧠 It tells **MLflow server**:  
+🧠 It tells **MLflow server**:
 > "Store metadata (runs, experiments, etc.) in a local SQLite file."
 
 ---
 
 ### 🔹 `http://localhost:5001`
-This is the **tracking URI for clients** (like your training script).  
+This is the **tracking URI for clients** (like your training script).
 It tells the script:
 > “Send all tracking data to the MLflow server running on `localhost:5001`.”
 
@@ -77,7 +77,7 @@ So in your Python code:
 mlflow.set_tracking_uri("http://localhost:5001")
 ```
 
-Means:  
+Means:
 > “Connect to the MLflow server on that address and log the run there.”
 
 ---
@@ -115,7 +115,7 @@ Let me know if you want to move to the next step — wrapping your training pipe
 
 1. in terminal: `prefect server start` => http://127.0.0.1:4200/
 2. in another terminal: `prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api`
-3. after that, register and run the flow with: 
+3. after that, register and run the flow with:
 
 ````
 prefect deployment build train_and_register_model.py:training_pipeline -n "Training Pipeline"
@@ -155,7 +155,7 @@ prefect agent start --pool default-agent-pool
     # "Staging"
     # "Archived"
     #model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}/{MODEL_STAGE}")
-    
+
     #When using a version number, use model_uri parameter models:/<model_name>/<version_number>
     print(f"Loading model from: models:/{MODEL_NAME}/versions/1")
     model = mlflow.pyfunc.load_model(model_uri="models:/car-price-model/1")
@@ -257,4 +257,26 @@ It’s warning about possible issues if your model receives missing values in in
 
 ![unit test results](image-1.png)
 
-# 
+# pre-commits
+1) add the following to requirements.txt and install it:
+````
+pre-commit==4.2.0
+black==25.1.0
+````
+2) create a .pre-commit-config.yaml file
+````yaml
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+      - id: black
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+
+````
+3) installeer de hook
+`pre-commit install`
