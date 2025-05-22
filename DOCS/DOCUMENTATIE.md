@@ -113,46 +113,35 @@ Let me know if you want to move to the next step — wrapping your training pipe
 
 # prefect
 
-1. in terminal: `prefect server start` => http://127.0.0.1:4200/
-2. in another terminal: `prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api`
-3. after that, register and run the flow with:
+> Veel problemen gehad bij het installeren en configureren van prefect, grotendeels door versies die niet compatieble waren. Uiteindelijk werkt het door de docker compose file juist te zetten met zelfde versies als in de requirements.txt.
+
+Wanneer de devcontainer wordt opgestart, zal prefect ook beschikbaar zijn op http://localhost:4200/dashboard
+
+![dashboard](image-8.png)
+
+Als de prefect.yaml, zoompool nog niet bestaat of de pipeline flow nog niet is geregistreerd op prefect:
 
 ````
-prefect deployment build train_and_register_model.py:training_pipeline -n "Training Pipeline"
-prefect deployment apply training_pipeline-deployment.yaml
-prefect agent start --pool default-agent-pool
+prefect init -> kies local in het keuzemenu
+prefect worker start --pool "zoompool" => TODO: nog automaten in commando bij docker compose
+prefect deploy train_and_register_model.py:training_pipeline -n cars1 -p zoompool
 ````
 
-1. On one terminal:
+LET OP!: vergeet de PREFECT_API_URL niet te zetten wanneer je manueel uitvoert, maar is in docker-compose.yaml gezet dus dit zou normaal in orde moeten zijn.
+Als dit toch moet gebeuren kan dit met:
 
-    ```shell
-    prefect server start
-    ```
+````
+export PREFECT_API_URL=http://prefect:4200/api
+prefect config set PREFECT_API_URL=$PREFECT_API_URL
+````
 
-2. On another terminal, go to the root directory of the repository.
+Wanneer je nu het script uitvoert lokaal of via de prefect UI zie je de details:
 
-3. On that terminal run:
+![prefect run details](image-7.png)
 
-    ```shell
-    prefect init -> 'no i will use the default deployment configuration'
-    (prefect deploy my_script.py:main_flow_function -n taxi1 -p zoompool)
-    prefect deploy train_and_register_model.py:training_pipeline -n "Training Pipeline" -p "zoompool"
-    export PREFECT_API_URL=http://127.0.0.1:4200
-    prefect worker start --pool "zoompool"
-    ```
+runnen vanuit de Prefect UI, klik op `Flows` > `main-flow` > `Deployments` > `taxi1` en dan op `Quick run` via de 3 dots rechts
 
-4. On the Prefect UI, click on `Flows` > `main-flow` > `Deployments` > `taxi1` and then on `Quick run` on the dots:
-
-    ![Quick run](screenshot.png)
-
-nothing showing up in UI?
--> You must tell your Python script explicitly to use the Prefect server at http://localhost:4200/api
-
-    prefect init
-    prefect worker start --pool "zoompool"
-    prefect deploy train_and_register_model.py:training_pipeline -n cars1 -p zoompool
-    maybe: export PREFECT_API_URL=http://127.0.0.1:4200
-
+LET OP!: worker "zoompool" moet runnen!
 
 # flask app
 
