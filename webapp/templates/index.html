@@ -1,5 +1,5 @@
 <!-- TODO: add tooltips for each field -->
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,37 +7,52 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-6">
         <h1 class="text-2xl font-bold text-center text-blue-600">Car Price Prediction</h1>
 
         <form id="predict-form" class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label for="year" class="block text-sm font-medium">Year</label>
+                    <label for="year" class="block text-sm font-medium">Year <br>
+                        <span class="text-sm font-normal text-gray-600">
+                            production year of the car
+                        </span>
+                    </label>
                     <input type="number" id="year" class="mt-1 block w-full border rounded-md p-2" required>
                 </div>
                 <div>
-                    <label for="condition" class="block text-sm font-medium">Condition</label>
+                    <label for="condition" class="block text-sm font-medium">Condition of the car <br>
+                        <span class="text-sm font-normal text-gray-600">
+                            1: Bad, 2: Fair, 3: Good, 4: Very Good, 5: Excellent
+                        </span>
+                    </label>
                     <input type="number" id="condition" min="0" max="5" class="mt-1 block w-full border rounded-md p-2" required>
                 </div>
                 <div>
-                    <label for="odometer" class="block text-sm font-medium">Odometer</label>
+                    <label for="odometer" class="block text-sm font-medium">Odometer <br>
+                        <span class="text-sm font-normal text-gray-600">
+                            (in miles)
+                        </span>
+                    </label>
                     <input type="number" id="odometer" class="mt-1 block w-full border rounded-md p-2" required>
                 </div>
                 <div>
-                    <label for="mmr" class="block text-sm font-medium">MMR</label>
+                    <label for="mmr" class="block text-sm font-medium">MMR value <br>
+                        <span class="text-sm font-normal text-gray-600">
+                            (use
+                            <a href="https://auth.manheim.com/as/authorization.oauth2?adaptor=manheim_customer&client_id=zdvy6trhqhe94qvmzpkq7v52&redirect_uri=https%3A%2F%2Fmmr.manheim.com%2Foauth%2Fcallback&response_type=code&scope=profile+openid+email&signup=manheim" class="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Manheim website</a>
+                             or their app to do a lookup)
+                        </span>
+                    </label>
                     <input type="number" id="mmr" class="mt-1 block w-full border rounded-md p-2" required>
                 </div>
                 <div class="col-span-2">
                     <label for="make" class="block text-sm font-medium">Make</label>
                     <select id="make" class="mt-1 block w-full border rounded-md p-2" required>
                         <option value="">-- Select Make --</option>
-                        <option value="acura">Acura</option>
-                        <option value="volvo">Volvo</option>
-                        <option value="bmw">BMW</option>
-                        <option value="audi">Audi</option>
-                        <option value="toyota">Toyota</option>
-                        <!-- Add other makes as needed -->
+                        {% for make in makes %}
+                            <option value="{{ make }}">{{ make | capitalize }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>

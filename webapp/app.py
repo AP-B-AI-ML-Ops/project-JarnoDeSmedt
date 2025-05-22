@@ -99,7 +99,7 @@ except Exception as e:
 @app.route("/", methods=["GET", "POST"])
 def home():
     print("ML model is running and loaded from model registry in MLFlow!")
-    return render_template("index.html")
+    return render_template("index.html", makes=MAKES)
 
 
 @app.route("/predict", methods=["POST"])

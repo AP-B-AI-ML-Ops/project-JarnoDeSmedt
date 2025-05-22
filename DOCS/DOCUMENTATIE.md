@@ -298,3 +298,6 @@ bijvoorbeeld hier zie je in de working tree dat isort een aantal dingen heeft ge
 als je dan opnieuw add en commit zie je:
 
 ![passed pre-commit hooks](image-5.png)
+
+# evidently AI
+Er zal door een task in de prefect workflow een html file worden gecreerd in de reports folder. De HTML file kan je openen in een webbrowser om te kijken of er datadrift optreedt in de nieuwe data.
