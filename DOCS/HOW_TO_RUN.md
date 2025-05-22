@@ -1,3 +1,4 @@
+0) zorg ervoor dat Docker draait. Op windows: open Docker Desktop
 1) open folder in VS code via een terminal met met `code .`
 2) ctrl + shift + p -> 'rebuild and reopen in container'
 je zal merken dat de containers worden gecreeerd en de devcontainer wordt geopend in vscode

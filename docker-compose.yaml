@@ -4,6 +4,11 @@ services:
       volumes:
         - .:/workspace:cached
         - mlruns:/mlflow/mlruns # don't use ./mlruns... -> is lokaal filesysteem! maar mlruns:/... This way, any artifact logging (like .pkl files) will persist and be accessible through the MLflow UI.
+      ports:
+        - "4201:4200"
+      environment:
+        - PREFECT_API_URL=http://prefect-server:4200/api
+        - MLFLOW_TRACKING_URI=http://mlflow:5000
       command: sleep infinity
   webapp:
     build:
@@ -31,19 +36,33 @@ services:
       - ARTIFACT_ROOT=/mlflow/mlruns
     command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlflow/mlruns --host 0.0.0.0
 
-  prefect:
-    image: prefecthq/prefect:2.14.12-python3.10
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: prefect
+      POSTGRES_PASSWORD: prefect
+      POSTGRES_DB: prefect
+    ports:
+      - "5432:5432"
+
+  prefect-server:
+    image: prefecthq/prefect:3.4.2-python3.12-conda
+    environment:
+      - PREFECT_UI_ENABLED=true
     ports:
       - "4200:4200"
+    command: prefect server start --host 0.0.0.0
+    depends_on:
+      - postgres
+
+  prefect-agent:
+    image: prefecthq/prefect:3.4.2-python3.12-conda
     environment:
-      - PREFECT_API_DATABASE_CONNECTION_URL=sqlite+aiosqlite:///prefect.db
-    volumes:
-      - ./flows:/flows
-    command: >
-      bash -c "
-        prefect config set PREFECT_UI_ENABLED=true &&
-        prefect server start
-      "
+        - PREFECT_API_URL=http://prefect-server:4200/api
+    depends_on:
+      - prefect-server
+    command: prefect worker start --pool default-agent-pool
+
 
   # prometheus:
   #   image: prom/prometheus

@@ -145,6 +145,14 @@ prefect agent start --pool default-agent-pool
 
     ![Quick run](screenshot.png)
 
+nothing showing up in UI?
+-> You must tell your Python script explicitly to use the Prefect server at http://localhost:4200/api
+
+    prefect init
+    prefect worker start --pool "zoompool"
+    prefect deploy train_and_register_model.py:training_pipeline -n cars1 -p zoompool
+    maybe: export PREFECT_API_URL=http://127.0.0.1:4200
+
 
 # flask app
 
