@@ -52,17 +52,23 @@ services:
     ports:
       - "4200:4200"
     command: prefect server start --host 0.0.0.0
+    volumes:
+      - ./:/workspace  # Mount local code
     depends_on:
       - postgres
 
   prefect-agent:
-    image: prefecthq/prefect:3.4.2-python3.12-conda
+    #image: prefecthq/prefect:3.4.2-python3.12-conda
+    build:
+      context: ./prefect
+      dockerfile: prefect-agent.Dockerfile
     environment:
         - PREFECT_API_URL=http://prefect-server:4200/api
     depends_on:
       - prefect-server
     command: prefect worker start --pool "zoompool"
-
+    volumes:
+      - ./:/workspace  # Mount local code
 
   # prometheus:
   #   image: prom/prometheus

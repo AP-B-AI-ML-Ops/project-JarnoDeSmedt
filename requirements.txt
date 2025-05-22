@@ -12,3 +12,4 @@ pre-commit==4.2.0
 black==25.1.0
 isort==6.0.1
 evidently==0.7.5
+setuptools==80.8.0

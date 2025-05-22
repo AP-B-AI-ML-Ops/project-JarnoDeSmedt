@@ -143,6 +143,8 @@ runnen vanuit de Prefect UI, klik op `Flows` > `main-flow` > `Deployments` > `ta
 
 LET OP!: worker "zoompool" moet runnen!
 
+> Ik heb nu ook een prefect folder met eigen dockerfile toegevoegd omdat ik errors kreeg als ik een flow wou runnen via de Prefect UI, de agent-python omgeving had geen MLflow,... geinstalleerd en kon daarom het script niet runnen. We voegen de requirements.txt toe aan de prefect python omgeving. Zo kan je nu dus de flow runnen vanuit de UI via de agent alsook vanuit de train-dev python omgeving.
+
 # flask app
 
 ````python

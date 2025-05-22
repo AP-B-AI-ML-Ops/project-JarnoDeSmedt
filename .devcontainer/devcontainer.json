@@ -5,9 +5,9 @@
     "dockerComposeFile": ["../docker-compose.yaml"], //Werkt nu met docker compose
     "service": "train-dev", // locate the service used in the docker compose file
     "shutdownAction": "none",
-    "workspaceFolder": "/workspace", //standaard locatie van de workspace in de container 
+    "workspaceFolder": "/workspace", //standaard locatie van de workspace in de container
   //"image": "python:3.10-slim", //oude manier van werken
-  "postCreateCommand": "apt-get update && apt-get install -y git && pip install --no-cache-dir -r requirements.txt", //sudo anders permission denied
+  "postCreateCommand": "apt-get update && apt-get install -y git && pip install --no-cache-dir -r requirements.txt",
   "extensions": [
     "ms-python.python",
     "ms-vscode.remote-repositories",
@@ -18,5 +18,3 @@
     "python.formatting.provider": "black"
   }
 }
-
-
