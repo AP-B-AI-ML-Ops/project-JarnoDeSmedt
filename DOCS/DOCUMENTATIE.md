@@ -292,5 +292,7 @@ of bijvoorbeeld uitvoeren van `pre-commit run pylint --all-files`
 
 ![output pylint](image-9.png)
 
+stel er lukt iets niet en je wil committen zonder precommit checks: `git commit -m "opkuisen en verder uitwerken" --no-verify` (not recommended)
+
 # evidently AI
 Er zal door een task in de prefect workflow een html file worden gecreerd in de reports folder. De HTML file kan je openen in een webbrowser om te kijken of er datadrift optreedt in de nieuwe data.
