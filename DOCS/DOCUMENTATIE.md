@@ -34,18 +34,11 @@ git config --global user.name "Jarno De Smedt"
 ````
 om te kunnen committen vanuit de terminal of vscode extention
 
-# tracking URI
+# tracking URI uitleg
 
+## What Do These URIs Actually Mean?
 
-ok perfect, i changed the tracking URI from mlflow.set_tracking_uri("sqlite:///mlflow.db") to mlflow.set_tracking_uri("http://localhost:5001") but i saw somewhere that you needed to use mlflow.set_tracking_uri("sqlite:///mlflow.db") if using docker compose, why don't we need it now? and when do we need it like that?
-
----
-
-
-Great question — understanding **when to use `sqlite:///mlflow.db` vs. `http://localhost:5001`** is crucial for MLflow projects, especially when using Docker Compose.
-
-
-## ✅ What Do These URIs Actually Mean?
+sqlite:///mlflow.db vs http://localhost:5001
 
 ### 🔹 `sqlite:///mlflow.db`
 This refers to a **local SQLite database file** and is used as a **backend store** for MLflow — *by the MLflow server*, not your training script.
@@ -104,12 +97,6 @@ Means:
 - Use `sqlite:///mlflow.db` in Docker Compose (for the MLflow service backend).
 - Never use `sqlite:///mlflow.db` in your script unless you're running MLflow in-process and locally (not via the server).
 
----
-
-Let me know if you want to move to the next step — wrapping your training pipeline with **Prefect orchestration**!
-
-
-
 
 # prefect
 
@@ -123,11 +110,11 @@ Als de prefect.yaml, zoompool nog niet bestaat of de pipeline flow nog niet is g
 
 ````
 prefect init -> kies local in het keuzemenu
-prefect worker start --pool "zoompool" => TODO: nog automaten in commando bij docker compose
+prefect worker start --pool "zoompool"
 prefect deploy train_and_register_model.py:training_pipeline -n cars1 -p zoompool
 ````
 
-LET OP!: vergeet de PREFECT_API_URL niet te zetten wanneer je manueel uitvoert, maar is in docker-compose.yaml gezet dus dit zou normaal in orde moeten zijn.
+LET OP!: wanneer je manueel uitvoert (dus niet met docker-compose) vergeet dan de PREFECT_API_URL niet te zetten. Maar is in docker-compose.yaml gezet dus dit zou normaal in orde moeten zijn.
 Als dit toch moet gebeuren kan dit met:
 
 ````
@@ -139,7 +126,7 @@ Wanneer je nu het script uitvoert lokaal of via de prefect UI zie je de details:
 
 ![prefect run details](image-7.png)
 
-runnen vanuit de Prefect UI, klik op `Flows` > `main-flow` > `Deployments` > `taxi1` en dan op `Quick run` via de 3 dots rechts
+runnen vanuit de Prefect UI, klik op `Flows` > `main-flow` > `Deployments` > `cars1` en dan op `Quick run` via de 3 dots rechts
 
 LET OP!: worker "zoompool" moet runnen!
 
@@ -300,6 +287,10 @@ bijvoorbeeld hier zie je in de working tree dat isort een aantal dingen heeft ge
 als je dan opnieuw add en commit zie je:
 
 ![passed pre-commit hooks](image-5.png)
+
+of bijvoorbeeld uitvoeren van `pre-commit run pylint --all-files`
+
+![output pylint](image-9.png)
 
 # evidently AI
 Er zal door een task in de prefect workflow een html file worden gecreerd in de reports folder. De HTML file kan je openen in een webbrowser om te kijken of er datadrift optreedt in de nieuwe data.

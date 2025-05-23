@@ -8,12 +8,12 @@ import pandas as pd
 from evidently import Report
 from evidently.metrics import *
 from evidently.presets import *
-from prefect import flow, task
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 
 import mlflow
+from prefect import flow, task
 
 # Set up MLflow
 # mlflow.set_tracking_uri("http://localhost:5001") #when not using docker
@@ -25,11 +25,26 @@ mlflow.set_experiment("CarPricePrediction")
 
 @task(name="load-data")
 def load_data(path="./DATA/car_prices.csv"):
+    """
+    Loads the dataset from a CSV file.
+    Args:
+        path (str): Path to the CSV file.
+    Returns:
+        pd.DataFrame: Loaded DataFrame.
+    """
+    # Load the dataset
     return pd.read_csv(path)
 
 
 @task(name="preprocess-data")
 def preprocess_data(df):
+    """
+    Preprocesses the data by cleaning, transforming, and encoding it.
+    Args:
+        df (pd.DataFrame): Raw DataFrame to be preprocessed.
+    Returns:
+        pd.DataFrame: Preprocessed DataFrame with relevant features and target variable.
+    """
     df = df.dropna(subset=["condition", "sellingprice"])
     df.loc[:, "condition"] = df["condition"].astype(int)
     df = df[["year", "make", "condition", "odometer", "mmr", "sellingprice"]]
@@ -63,6 +78,17 @@ def preprocess_data(df):
 
 @task(name="split-data")
 def split_data(df_encoded):
+    """
+    Splits the data into training and testing sets.
+    Args:
+        df_encoded (pd.DataFrame): Encoded DataFrame with features and target variable.
+    Returns:
+        X_train (pd.DataFrame): Features for training.
+        X_test (pd.DataFrame): Features for testing.
+        y_train (pd.Series): Target variable for training.
+        y_test (pd.Series): Target variable for testing.
+    """
+    # Split the data into features and target variable
     X = df_encoded.drop(columns=["sellingprice"])
     y = df_encoded["sellingprice"]
     X_train, X_test, y_train, y_test = train_test_split(
@@ -73,6 +99,16 @@ def split_data(df_encoded):
 
 @task(name="train-model")
 def train_model(X_train, y_train):
+    """
+    Trains the model on provided data.
+
+    Args:
+        X_train (pd.DataFrame): Features for training.
+        y_train (pd.Series): Target variable for training.
+
+    Returns:
+        model: Trained model object.
+    """
     model = LinearRegression()
     model.fit(X_train, y_train)
 
@@ -81,6 +117,20 @@ def train_model(X_train, y_train):
 
 @task(name="evaluate-model", log_prints=True)
 def evaluate_model(model, X_test, y_test):
+    """
+    Evaluates the model on test data and logs metrics.
+    Args:
+        model: Trained model object.
+        X_test (pd.DataFrame): Features for testing.
+        y_test (pd.Series): Target variable for testing.
+    Returns:
+        mse (float): Mean Squared Error.
+        rmse (float): Root Mean Squared Error.
+        r2 (float): R-squared score.
+        signature: Model signature.
+        input_example: Example input for the model.
+    """
+    # Evaluate the model
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
@@ -88,7 +138,8 @@ def evaluate_model(model, X_test, y_test):
 
     # Define the input signature
     print(X_test.columns.tolist())
-    # input_example = X_test[["year", "condition", "odometer", "mmr", "make"]] # zou op deze manier moeten zodat je niet alle boolean encoded make_* kolommen hebt
+    # zou op deze manier moeten zodat je niet alle boolean encoded make_* kolommen hebt
+    # input_example = X_test[["year", "condition", "odometer", "mmr", "make"]]
     input_example = X_test.iloc[:1]
     signature = mlflow.models.signature.infer_signature(X_test, model.predict(X_test))
 
@@ -98,6 +149,17 @@ def evaluate_model(model, X_test, y_test):
 
 @task(name="log-model-to-mlflow")
 def log_to_mlflow(model, mse, rmse, r2, signature, input_example):
+    """
+    Logs the model and its metrics to MLflow.
+    Args:
+        model: Trained model object.
+        mse (float): Mean Squared Error.
+        rmse (float): Root Mean Squared Error.
+        r2 (float): R-squared score.
+        signature: Model signature.
+        input_example: Example input for the model.
+    """
+    mlflow.log_param("model_name", "LinearRegression")
     mlflow.log_param("model_type", "LinearRegression")
     mlflow.log_metric("mse", mse)
     mlflow.log_metric("rmse", rmse)
@@ -115,6 +177,12 @@ def log_to_mlflow(model, mse, rmse, r2, signature, input_example):
 
 @task(name="monitor-data-drift")
 def monitor_data_drift(reference_data, current_data):
+    """
+    Monitors data drift using Evidently and generates a report.
+    Args:
+        reference_data (pd.DataFrame): Reference data for comparison.
+        current_data (pd.DataFrame): Current data to check for drift.
+    """
     report = Report([DataDriftPreset()])
 
     my_eval = report.run(reference_data, current_data)
@@ -137,6 +205,10 @@ def check_drift_threshold(json_path="reports/drift_report.json", threshold=0.3):
 
 @flow(name="training-pipeline")
 def training_pipeline():
+    """
+    Main training pipeline that orchestrates the loading, preprocessing,
+    splitting, training, evaluation, and logging of the model.
+    """
     with mlflow.start_run():
         df = load_data()
         df_encoded = preprocess_data(df)

@@ -20,3 +20,12 @@ repos:
         entry: pylint
         language: system
         types: [python]
+  # - repo: local #automatisch pytest uitvoeren voor commits
+  #   hooks:
+  #     - id: pytest-check
+  #       name: pytest-check
+  #       entry: pytest
+  #       language: system
+  #       pass_filenames: false
+  #       always_run: true
+  #       args: ["tests/"]

@@ -1,15 +1,63 @@
-import pandas as pd 
+import pandas as pd
 
 ALL_MAKES = [
-    'acura', 'airstream', 'aston martin', 'audi', 'bentley', 'bmw', 'buick',
-    'cadillac', 'chevrolet', 'chrysler', 'daewoo', 'dodge', 'dot', 'ferrari',
-    'fiat', 'fisker', 'ford', 'geo', 'gmc', 'honda', 'hummer', 'hyundai',
-    'infiniti', 'isuzu', 'jaguar', 'jeep', 'kia', 'lamborghini', 'landrover',
-    'lexus', 'lincoln', 'lotus', 'maserati', 'mazda', 'mercedes', 'mercury',
-    'mini', 'mitsubishi', 'nissan', 'oldsmobile', 'plymouth', 'pontiac',
-    'porsche', 'ram', 'rolls-royce', 'saab', 'saturn', 'scion', 'smart',
-    'subaru', 'suzuki', 'tesla', 'toyota', 'volkswagen', 'volvo'
+    "acura",
+    "airstream",
+    "aston martin",
+    "audi",
+    "bentley",
+    "bmw",
+    "buick",
+    "cadillac",
+    "chevrolet",
+    "chrysler",
+    "daewoo",
+    "dodge",
+    "dot",
+    "ferrari",
+    "fiat",
+    "fisker",
+    "ford",
+    "geo",
+    "gmc",
+    "honda",
+    "hummer",
+    "hyundai",
+    "infiniti",
+    "isuzu",
+    "jaguar",
+    "jeep",
+    "kia",
+    "lamborghini",
+    "landrover",
+    "lexus",
+    "lincoln",
+    "lotus",
+    "maserati",
+    "mazda",
+    "mercedes",
+    "mercury",
+    "mini",
+    "mitsubishi",
+    "nissan",
+    "oldsmobile",
+    "plymouth",
+    "pontiac",
+    "porsche",
+    "ram",
+    "rolls-royce",
+    "saab",
+    "saturn",
+    "scion",
+    "smart",
+    "subaru",
+    "suzuki",
+    "tesla",
+    "toyota",
+    "volkswagen",
+    "volvo",
 ]
+
 
 def predict_price(model, raw_input: dict) -> float:
     """
@@ -22,14 +70,15 @@ def predict_price(model, raw_input: dict) -> float:
     # Prepare the input data
     all_makes = ALL_MAKES
     input_data = prepare_input(raw_input, all_makes)
-    
+
     # Convert to DataFrame
     input_df = pd.DataFrame([input_data])
-    
+
     # Make prediction
     prediction = model.predict(input_df)
-    
+
     return prediction[0]
+
 
 def prepare_input(raw_input: dict, all_makes: list) -> dict:
     """
@@ -56,6 +105,6 @@ def prepare_input(raw_input: dict, all_makes: list) -> dict:
         "condition": condition,
         "odometer": odometer,
         "mmr": mmr,
-        **make_features
+        **make_features,
     }
     return features

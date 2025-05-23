@@ -1,9 +1,5 @@
-import os
-import pickle
-
-import numpy as np
 import pandas as pd
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask import Flask, jsonify, render_template, request
 
 import mlflow
 
@@ -82,7 +78,7 @@ with open("model.pkl", "rb") as f:
 model = None  # global
 
 try:
-    # When using a version number, use model_uri parameter models:/<model_name>/<version_number>
+    # When using a version number, models:/<model_name>/<version_number>
     print(f"Loading model from: models:/{MODEL_NAME}/versions/1")
     model = mlflow.pyfunc.load_model(model_uri="models:/car-price-model/1")
     print("✅ Model loaded successfully!")
@@ -98,12 +94,14 @@ except Exception as e:
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    """Render the home page with a list of car makes."""
     print("ML model is running and loaded from model registry in MLFlow!")
     return render_template("index.html", makes=MAKES)
 
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    """Predict the car price based on the features provided in the request."""
     print("DEBUG: predict endpoint called")
     print(f"DEBUG: model is type {type(model)}")
     if model is None:
