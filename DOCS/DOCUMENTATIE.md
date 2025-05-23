@@ -1,3 +1,7 @@
+<mark>
+For instructions on how to run and set up the project, please check the README.md. This is rather documentation about the project for myself.
+</mark>
+
 # devcontainer
 
 `.devcontainer` folder toevoegen met daarin `devcontainer.json` file erin:

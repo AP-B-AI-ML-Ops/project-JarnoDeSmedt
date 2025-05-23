@@ -108,7 +108,7 @@ Volgende zaken zijn voor verdere uitbreiding. Wegens tijdgebrek ben ik hier niet
 
     - Voer nu de pipeline uit:
 
-        - Open een terminal (verifieer ``/workspace``)
+        - Open een terminal (verifieer `/workspace`, kan in dezelfde terminal)
         - Daarin kan je het script uitvoeren door `python train_and_register_model.py` uit te voeren. Het model wordt hiermee getraind en gelogd in MLflow. Ook in prefect zie je het verloop van deze run.
 
 5. Services bekijken

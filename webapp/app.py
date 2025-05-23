@@ -1,7 +1,6 @@
+import mlflow
 import pandas as pd
 from flask import Flask, jsonify, render_template, request
-
-import mlflow
 
 MAKES = [
     "acura",
@@ -80,7 +79,7 @@ model = None  # global
 try:
     # When using a version number, models:/<model_name>/<version_number>
     print(f"Loading model from: models:/{MODEL_NAME}/versions/1")
-    model = mlflow.pyfunc.load_model(model_uri="models:/car-price-model/1")
+    model = mlflow.pyfunc.load_model("models:/car-price-model/1")
     print("✅ Model loaded successfully!")
 
     # or with alias if you have set it in the MLflow UI
